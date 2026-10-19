@@ -1,0 +1,40 @@
+
+name: Build JP Ambient APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Prepare project
+        run: |
+          mkdir -p app/src/main/java/com/jpambient
+          mkdir -p app/src/main/res/values
+
+      - name: Check project files
+        run: |
+          if [ ! -f settings.gradle ] && [ ! -f settings.gradle.kts ]; then
+            echo "Le projet Android n'est pas encore ajouté."
+            exit 1
+          fi
